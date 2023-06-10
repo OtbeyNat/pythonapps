@@ -14,38 +14,48 @@ class my_window(QMainWindow):
 
     def initUI(self):
         self.lbl1 = QtWidgets.QLabel(self)
+        self.lbl1.setFont(QFont('Arial',12))
         self.lbl1.setText('High:')
         self.lbl1.move(50,50)
 
         self.lbl2 = QtWidgets.QLabel(self)
+        self.lbl2.setFont(QFont('Arial',12))
         self.lbl2.setText('Low:')
         self.lbl2.move(50,90)
 
         self.txt1 = QtWidgets.QLineEdit(self)
+        self.txt1.setFont(QFont('Arial',12))
         self.txt1.move(100,50)
 
         self.txt2 = QtWidgets.QLineEdit(self)
+        self.txt2.setFont(QFont('Arial',12))
         self.txt2.move(100,90)
 
         self.lblC = QtWidgets.QLabel(self)
+        self.lblC.setFont(QFont('Arial',12))
         self.lblC.setText('0.618 =>')
-        self.lblC.move(250,50)
+        self.lblC.move(220,50)
 
         self.lblD = QtWidgets.QLabel(self)
+        self.lblD.setFont(QFont('Arial',12))
         self.lblD.setText('0.786 =>')
-        self.lblD.move(250,90)
+        self.lblD.move(220,90)
 
         self.lblE = QtWidgets.QLabel(self)
+        self.lblE.setFont(QFont('Arial',12))
         self.lblE.setText('0.886 =>')
-        self.lblE.move(250,130)
+        self.lblE.move(220,130)
 
         self.valC = QtWidgets.QLabel(self)
+        self.valC.setFont(QFont('Arial',12))
         self.valC.move(300,50)
 
         self.valD = QtWidgets.QLabel(self)
+        self.valD.setFont(QFont('Arial',12))
         self.valD.move(300,90)
 
         self.valE = QtWidgets.QLabel(self)
+        self.valE.setFont(QFont('Arial',12))
         self.valE.move(300,130)
 
         self.btn_save = QtWidgets.QPushButton(self)
@@ -77,7 +87,7 @@ class my_window(QMainWindow):
             self.valE.setText(str(E))
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key.Key_Return.value or event.key() == Qt.Key.Key_Enter.value:
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             self.calculate()
 
 if __name__ == '__main__':
