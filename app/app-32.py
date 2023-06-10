@@ -9,7 +9,7 @@ class my_window(QMainWindow):
         super(my_window,self).__init__()
         self.setGeometry(500,300,400,400)
         self.setFixedSize(400,400)
-        self.setWindowTitle("App")
+        self.setWindowTitle("Calculator")
         self.initUI()
 
     def initUI(self):
