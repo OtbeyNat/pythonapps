@@ -59,11 +59,13 @@ def select_difficulty():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                #quit()
+                return None
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
-                    quit()
+                    #quit()
+                    return None
         
         game_window.fill(black)
         title_surface = title_font.render('SNAKE GAME', True, green)
@@ -222,28 +224,34 @@ def game_over(end):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                #quit()
+                return None
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     return [start_speed,increment,despawn_time]
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
-                    quit()
+                    #quit()
+                    return None
 
 diff = select_difficulty()
-start_time = time.time()
-start_speed = diff[0]
-increment = diff[1]
-despawn_time = diff[2]
-snake_speed = start_speed
+if diff != None:
+    start_time = time.time()
+    start_speed = diff[0]
+    increment = diff[1]
+    despawn_time = diff[2]
+    snake_speed = start_speed
 
+game_quit = False
 # game running
-while True:
+while diff != None:
     #handling key events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            quit()
+            game_quit = True
+            #quit()
+            break
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP or event.key == pygame.K_w:
                 change_to = 'UP'
@@ -253,6 +261,8 @@ while True:
                 change_to = 'LEFT'
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 change_to = 'RIGHT'
+    if game_quit:
+        break
     if change_to == 'UP' and direction != 'DOWN':
         direction = 'UP'
     if change_to == 'DOWN' and direction != 'UP':
@@ -316,32 +326,39 @@ while True:
             gold_position = [-1,-1]
             first = True
 
-    #fill entire window black
-    game_window.fill(black)
+    if game_window != None:
+        #fill entire window black
+        game_window.fill(black)
 
-    # draw each part of snake
-    for pos in snake_body:
-        pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
+        # draw each part of snake
+        for pos in snake_body:
+            pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
 
-    # draw fruit square
-    pygame.draw.rect(game_window, white, pygame.Rect(fruit_position[0], fruit_position[1], 10, 10))
+        # draw fruit square
+        pygame.draw.rect(game_window, white, pygame.Rect(fruit_position[0], fruit_position[1], 10, 10))
 
-    if gold_spawn:
-        pygame.draw.rect(game_window, yellow, pygame.Rect(gold_position[0],gold_position[1],10,10))
-    
+        if gold_spawn:
+            pygame.draw.rect(game_window, yellow, pygame.Rect(gold_position[0],gold_position[1],10,10))
+        
     # Game Over conditions
     res = None
+    gameOver = False
     # out of bounds
     if snake_position[0] < 0 or snake_position[0] > window_x-10:
         res = game_over(time.time())
+        gameOver = True
     if snake_position[1] < 0 or snake_position[1] > window_y-10:
         res = game_over(time.time())
+        gameOver = True
      
     # touching the snake body
     for block in snake_body[1:]:
         if snake_position[0] == block[0] and snake_position[1] == block[1]:
             res = game_over(time.time())
+            gameOver = True
 
+    if gameOver and res == None:
+        break
     if res != None:
         start_speed = res[0]
         increment = res[1]
