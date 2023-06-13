@@ -1,0 +1,10 @@
+--Modified Snake Game--
+Author: Tobey Tan
+Date Published: June 2023
+Description: A modified version to the classic snake game consisting of additional features such as a timer, varying difficulties, and a local multiplayer option
+Instructions: 
+- SINGLEPLAYER: WASD or Arrow Keys ==> change snake direction
+- MULTIPLAYER:
+    - WASD ==> Turns Green Snake 
+    - Arrows ==> Turns Red Snake
+How to Multiplayer: From the difficulty selection screen, click on the button labeled "1 VS 1" so that it is highlighted. Then click on what of the four difficulties to start the game
