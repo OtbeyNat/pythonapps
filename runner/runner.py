@@ -108,16 +108,6 @@ def collision_sprite():
         return False
     else: return True
 
-def player_animation():
-    global player_surface, player_index
-
-    if player_rect.bottom < 300:
-        player_surface = player_jump
-    else:
-        player_index += 0.1
-        if player_index >= len(player_walk): player_index = 0
-        player_surface = player_walk[int(player_index)]
-
 pygame.init()
 screen = pygame.display.set_mode((800,400))
 pygame.display.set_caption("Pixel Runner")
@@ -127,7 +117,7 @@ game_active = False
 start_time = 0
 score = 0
 music = pygame.mixer.Sound('audio/music.wav')
-music.set_volume(0.5)
+music.set_volume(0.25)
 music.play(loops = -1)
 
 player = pygame.sprite.GroupSingle()
