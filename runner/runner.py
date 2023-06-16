@@ -90,18 +90,6 @@ def display_score(o_time,ten):
         ten = current_time
     return [current_time,o_time,ten]
 
-def obstacle_movement(obstacle_list):
-    if obstacle_list:
-        for obstacle_rect in obstacle_list:
-            obstacle_rect.x -=5
-            if obstacle_rect.bottom == 300:
-                screen.blit(snail_surface,obstacle_rect)
-            else: 
-                screen.blit(fly_surface,obstacle_rect)
-        obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
-    else: return []
-    return obstacle_list
-
 def collision_sprite():
     if pygame.sprite.spritecollide(player.sprite,obstacle_group,False): 
         obstacle_group.empty()
