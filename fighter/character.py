@@ -1,55 +1,112 @@
 import pygame
 
 class Character():
-    def __init__(self,x,y,pnum,width,height) -> None:
+    def __init__(self,x,y,pnum,width,height,char_data,spritesheet,animation_frames,sound) -> None:
         self.rect = pygame.Rect((x,y,80,180))
         self.pnum = pnum
         self.screen_width = width
         self.screen_height = height
         self.vel_y = 0
+        self.running = False
         self.jumped = False
-        self.facing_left = 1
+        if pnum == 2: self.facing_left = 1
+        else: self.facing_left = 0
         self.attack_num = 0
         self.attacking = False
+        self.attack_cd = 0
+        self.check_atk = 1
+        self.hit = False
+        self.alive = True
         self.health = 100
         self.max_hp = 100
-        # self.mid_air = False
+        self.img_size = char_data[0]
+        self.img_scale = char_data[1]
+        self.offset = char_data[2]
+        self.animation_frames = animation_frames
+        self.animation_list = self.load_images(spritesheet)
+        self.action = 0 
+        self.frame_index = 0
+        self.image = self.animation_list[self.action][self.frame_index]
+        self.update_time = pygame.time.get_ticks()
+        self.sound = sound
+        self.blocking = False
+        self.block_start = 0
+        self.block_cd = 0
+        # 0=idle 1=run 2=jump 3=atk1 4=atk2 5=hit 6=death
 
-    def move(self,surface,target):
+    def load_images(self,sprite_sheet):
+        animation_list = []
+        block_img = None
+        for y,num in enumerate(self.animation_frames):
+            tmp_img_list = []
+            for x in range(num):
+                tmp_img = sprite_sheet.subsurface(x*self.img_size,y*self.img_size,self.img_size,self.img_size)
+                tmp_img_list.append(pygame.transform.scale(tmp_img,(self.img_size*self.img_scale,self.img_size*self.img_scale)))
+            animation_list.append(tmp_img_list)
+            if y == 3: block_img = tmp_img_list[-1]
+            if self.pnum == 2 and y == 4: block_img = tmp_img_list[-1]
+        animation_list.append([block_img])
+        self.animation_frames.append(1)
+        return animation_list
+    
+    def move(self):
         speed = 10
         dx = 0
         dy = 0
         gravity = 2
-
+        self.running = False
         key = pygame.key.get_pressed()
         # movement
-        if self.pnum == 1: # player 1 keys
-            if key[pygame.K_a]: 
-                dx = -speed
-                self.facing_left = 1
-            if key[pygame.K_d]: 
-                dx = speed
-                self.facing_left = 0
-            if key[pygame.K_w] and not self.jumped: 
-                dy = -30
-                self.jumped = True
+        if self.pnum == 1 and self.alive: # player 1 keys
+            if not self.blocking:
+                if key[pygame.K_a]: 
+                    dx = -speed
+                    self.facing_left = 1
+                    self.running = True
+                if key[pygame.K_d]: 
+                    dx = speed
+                    self.facing_left = 0
+                    self.running = True
+                if key[pygame.K_w] and not self.jumped: 
+                    self.vel_y = -30
+                    self.jumped = True
+                #include block
+                if key[pygame.K_s]:
+                    if pygame.time.get_ticks() - self.block_cd >= 1250:
+                        self.blocking = True
+                        self.block_start = pygame.time.get_ticks()
+                # attack
+                if (key[pygame.K_r] or key[pygame.K_t]) and not self.attacking:
+                    if key[pygame.K_r]: self.attack_num = 1
+                    else: self.attack_num = 2
+                    if pygame.time.get_ticks() - self.attack_cd >= 750:
+                        self.attacking = True
+                        self.sound.play()
 
-            # attack
-            if (key[pygame.K_r] or key[pygame.K_t]) and not self.attacking:
-                if key[pygame.K_r]: self.attack_num = 1
-                else: self.attack_num = 2
-                self.attack(surface,target)
-
-        if self.pnum == 2: # player 2 keys
-            if key[pygame.K_LEFT]: 
-                dx = -speed
-                self.facing_left = 1
-            if key[pygame.K_RIGHT]: 
-                dx = speed
-                self.facing_left = 0
-            if key[pygame.K_UP] and not self.jumped: 
-                dy = -30
-                self.jumped = True
+        if self.pnum == 2 and self.alive: # player 2 keys
+            
+            if not self.blocking:
+                if key[pygame.K_LEFT]: 
+                    dx = -speed
+                    self.facing_left = 1
+                    self.running = True
+                if key[pygame.K_RIGHT]: 
+                    dx = speed
+                    self.facing_left = 0
+                    self.running = True
+                if key[pygame.K_UP] and not self.jumped: 
+                    self.vel_y = -30
+                    self.jumped = True
+                if key[pygame.K_DOWN]:
+                    if pygame.time.get_ticks() - self.block_cd >= 1250:
+                        self.blocking = True
+                        self.block_start = pygame.time.get_ticks()
+                if (key[pygame.K_SLASH] or key[pygame.K_PERIOD]) and not self.attacking:
+                    if key[pygame.K_PERIOD]: self.attack_num = 1
+                    else: self.attack_num = 2
+                    if pygame.time.get_ticks() - self.attack_cd >= 750:
+                        self.attacking = True
+                        self.sound.play()
         
         # set dx,dy
         # gravity
@@ -61,20 +118,63 @@ class Character():
         if self.rect.right + dx > self.screen_width: dx = self.screen_width - self.rect.right
         if self.rect.bottom + dy > self.screen_height - 110:
             self.vel_y = 0
-            dy = self.screen_height - 110 - self.rect.bottom
             self.jumped = False
-
+            dy = self.screen_height - 110 - self.rect.bottom
+    
         # update rect
         self.rect.x += dx
         self.rect.y += dy
         
-    def attack(self,surface,target):
-        self.attacking = True
-        attack_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.facing_left), self.rect.y, 2 * self.rect.width,self.rect.height)
-        if attack_rect.colliderect(target.rect):
-            target.health -= 10
-        
-        # pygame.draw.rect(surface,'Green', attack_rect)
+    def update(self,target):
+        animation_cd = 75
+        if self.health <= 0:
+            self.health = 0
+            self.alive = False
+            self.change_action(6)
+        elif self.hit: self.change_action(5)
+        elif self.blocking: self.change_action(7) #blocking
+        elif self.attacking:
+            if self.attack_num == 1: self.change_action(3)
+            else: self.change_action(4)
+        elif self.jumped: self.change_action(2)
+        elif self.running: self.change_action(1)
+        else: self.change_action(0)
 
+        self.image = self.animation_list[self.action][self.frame_index]
+        if pygame.time.get_ticks() - self.update_time >= animation_cd:
+            self.frame_index += 1
+            self.update_time = pygame.time.get_ticks()
+        if self.blocking and pygame.time.get_ticks() - self.block_start >= 500:
+            self.blocking = False
+            self.block_cd = pygame.time.get_ticks()
+        if self.attacking and self.frame_index == 4 and self.check_atk:
+            self.attack(target)
+            self.check_atk = False
+        if self.frame_index >= self.animation_frames[self.action]: 
+            # end of animation cycle 
+            if not self.alive: self.frame_index = self.animation_frames[self.action] -1
+            else:
+                if self.attacking:
+                    self.attacking = False
+                    self.check_atk = True
+                    self.attack_cd = pygame.time.get_ticks()
+                if self.hit: self.hit = False
+                self.frame_index = 0
+
+    def change_action(self, new_action):
+        if self.action != new_action: 
+            self.action = new_action
+            self.frame_index = 0
+            self.update_time = pygame.time.get_ticks()
+
+    def attack(self,target):
+        attack_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.facing_left), self.rect.y, 2 * self.rect.width,self.rect.height)
+        if attack_rect.colliderect(target.rect) and not target.blocking:
+            target.health -= 10
+            target.hit = True
+        
     def draw(self,surface):
-        pygame.draw.rect(surface, 'Red', self.rect)
+        #pygame.draw.rect(surface, 'Red', self.rect)
+        # flips image if facing left
+        img = pygame.transform.flip(self.image,self.facing_left,False)
+        surface.blit(img,(self.rect.x - (self.offset[0] * self.img_scale),self.rect.y - (self.offset[1] * self.img_scale)))
