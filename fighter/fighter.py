@@ -31,13 +31,15 @@ WIZARD_SCALE = 3
 WIZARD_OFFSET = [112,107]
 wizard_data = [WIZARD_SIZE,WIZARD_SCALE,WIZARD_OFFSET]
 
-pygame.mixer.music.load("assets/audio/music.mp3")
-pygame.mixer.music.set_volume(0.1)
-pygame.mixer.music.play(-1,0.0,3000)
+# pygame.mixer.music.load("assets/audio/music.mp3")
+# pygame.mixer.music.set_volume(0.1)
+# pygame.mixer.music.play(-1,0.0,3000)
 sword = pygame.mixer.Sound("assets/audio/sword.wav")
 sword.set_volume(0.3)
 magic = pygame.mixer.Sound("assets/audio/magic.wav")
 magic.set_volume(0.4)
+red_proj = pygame.image.load("assets/images/projectiles/red.png")
+blue_proj = pygame.image.load("assets/images/projectiles/blue.png")
 
 def draw_bg():
     screen.blit(background,(0,0))
@@ -48,8 +50,8 @@ def draw_hp(hp,max_hp,x,y):
     pygame.draw.rect(screen,'Red',(x,y,400,30))
     pygame.draw.rect(screen,'Yellow',(x,y,400*percent_hp,30))
 
-player1 = Character(200,310,1,SCREEN_WIDTH,SCREEN_HEIGHT,warrior_data,warrior_sheet,WARRIOR_FRAMES_ANIMATION,sword)
-player2 = Character(700,310,2,SCREEN_WIDTH,SCREEN_HEIGHT,wizard_data,wizard_sheet,WIZARD_FRAMES_ANIMATION,magic)
+player1 = Character(200,310,1,SCREEN_WIDTH,SCREEN_HEIGHT,warrior_data,warrior_sheet,WARRIOR_FRAMES_ANIMATION,sword,blue_proj)
+player2 = Character(700,310,2,SCREEN_WIDTH,SCREEN_HEIGHT,wizard_data,wizard_sheet,WIZARD_FRAMES_ANIMATION,magic,red_proj)
 
 countdown = 3
 countdown_time = pygame.time.get_ticks()
@@ -91,6 +93,22 @@ while run:
     player1.draw(screen)
     player2.draw(screen)
 
+    if player1.projectile and player2.projectile:
+        # 2 projectiles at each other cancel out
+        if player1.proj_rect.colliderect(player2.proj_rect) or player2.proj_rect.colliderect(player1.proj_rect):
+            player1.projectile = False
+            player2.projectile = False
+    if player1.projectile:
+        if player1.proj_rect.colliderect(player2.rect):
+            player2.hit = True
+            player2.health -= 10
+            player1.projectile = False
+    if player2.projectile:
+        if player2.proj_rect.colliderect(player1.rect):
+            player1.hit = True
+            player1.health -= 10
+            player2.projectile = False
+
     if not round_over:
         if not player1.alive:
             scores[1] += 1
@@ -108,8 +126,8 @@ while run:
             countdown = 3
             player1.animation_frames.pop()
             player2.animation_frames.pop()
-            player1 = Character(200,310,1,SCREEN_WIDTH,SCREEN_HEIGHT,warrior_data,warrior_sheet,WARRIOR_FRAMES_ANIMATION,sword)
-            player2 = Character(700,310,2,SCREEN_WIDTH,SCREEN_HEIGHT,wizard_data,wizard_sheet,WIZARD_FRAMES_ANIMATION,magic)
+            player1 = Character(200,310,1,SCREEN_WIDTH,SCREEN_HEIGHT,warrior_data,warrior_sheet,WARRIOR_FRAMES_ANIMATION,sword,blue_proj)
+            player2 = Character(700,310,2,SCREEN_WIDTH,SCREEN_HEIGHT,wizard_data,wizard_sheet,WIZARD_FRAMES_ANIMATION,magic,red_proj)
 
 
     pygame.display.update()
