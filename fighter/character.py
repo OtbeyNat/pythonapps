@@ -39,8 +39,6 @@ class Character():
         self.blocking = False
         self.block_start = 0
         self.block_cd = 0
-        
-        
         # 0=idle 1=run 2=jump 3=atk1 4=atk2 5=hit 6=death
 
     def load_images(self,sprite_sheet,proj_sheet):
@@ -100,7 +98,6 @@ class Character():
                         self.sound.play()
 
         if self.pnum == 2 and self.alive: # player 2 keys
-            
             if not self.blocking:
                 if key[pygame.K_LEFT]: 
                     dx = -speed

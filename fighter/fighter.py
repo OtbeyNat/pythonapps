@@ -129,7 +129,6 @@ while run:
             player1 = Character(200,310,1,SCREEN_WIDTH,SCREEN_HEIGHT,warrior_data,warrior_sheet,WARRIOR_FRAMES_ANIMATION,sword,blue_proj)
             player2 = Character(700,310,2,SCREEN_WIDTH,SCREEN_HEIGHT,wizard_data,wizard_sheet,WIZARD_FRAMES_ANIMATION,magic,red_proj)
 
-
     pygame.display.update()
     
 pygame.quit()
