@@ -212,7 +212,7 @@ class Character():
     def draw(self,surface):
         #pygame.draw.rect(surface, 'Red', self.rect)
         # flips image if facing left
-        img = pygame.transform.flip(self.image,self.facing_left,False)
+        img = pygame.transform.flip(self.image,self.`facing_left`,False)
         surface.blit(img,(self.rect.x - (self.offset[0] * self.img_scale),self.rect.y - (self.offset[1] * self.img_scale)))
 
         if self.projectile:
