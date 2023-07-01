@@ -90,8 +90,8 @@ class Character():
                         self.blocking = True
                         self.block_start = pygame.time.get_ticks()
                 # attack
-                if (key[pygame.K_r] or key[pygame.K_t]) and not self.attacking:
-                    if key[pygame.K_t]: self.attack_num = 1
+                if (key[pygame.K_e] or key[pygame.K_r]) and not self.attacking:
+                    if key[pygame.K_r]: self.attack_num = 1
                     else: self.attack_num = 2
                     if pygame.time.get_ticks() - self.attack_cd >= 1000:
                         self.attacking = True
@@ -114,8 +114,8 @@ class Character():
                     if pygame.time.get_ticks() - self.block_cd >= 1500:
                         self.blocking = True
                         self.block_start = pygame.time.get_ticks()
-                if (key[pygame.K_SLASH] or key[pygame.K_PERIOD]) and not self.attacking:
-                    if key[pygame.K_SLASH]: self.attack_num = 2
+                if (key[pygame.K_RSHIFT] or key[pygame.K_SLASH]) and not self.attacking:
+                    if key[pygame.K_RSHIFT]: self.attack_num = 2
                     else: self.attack_num = 1
                     if pygame.time.get_ticks() - self.attack_cd >= 1000:
                         self.attacking = True
@@ -126,7 +126,7 @@ class Character():
         self.vel_y += gravity
         dy += self.vel_y
 
-        # stay on screen
+        # stay on scree
         if self.rect.left + dx < 0: dx = -self.rect.left
         if self.rect.right + dx > self.screen_width: dx = self.screen_width - self.rect.right
         if self.rect.bottom + dy > self.screen_height - 110:
@@ -212,7 +212,9 @@ class Character():
     def draw(self,surface):
         #pygame.draw.rect(surface, 'Red', self.rect)
         # flips image if facing left
-        img = pygame.transform.flip(self.image,self.`facing_left`,False)
+        if self.facing_left: left = True
+        else: left = False
+        img = pygame.transform.flip(self.image,left,False)
         surface.blit(img,(self.rect.x - (self.offset[0] * self.img_scale),self.rect.y - (self.offset[1] * self.img_scale)))
 
         if self.projectile:
