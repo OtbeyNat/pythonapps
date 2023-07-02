@@ -235,7 +235,6 @@ class Player():
             for tile in world.tiles:
                 if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
                     dx = 0
-                    print("collision dx")
                 if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
                     if self.vel_y < 0: # jumping
                         dy = tile[1].bottom - self.rect.top
@@ -244,6 +243,7 @@ class Player():
                         dy = tile[1].top - self.rect.bottom
                         self.mid_air = False
                         self.vel_y = 0
+                        # print(dy)
 
             if pygame.sprite.spritecollide(self,blob_group,False): g_o = 1
             if pygame.sprite.spritecollide(self,lava_group,False): g_o = 1 
