@@ -1,19 +1,31 @@
 Credit: https://www.youtube.com/watch?v=s5bd9KMSSW4
 
 Warrior Controls:
+
 Left: A
+
 Right: D
+
 Jump: W
+
 Block: S
+
 Melee: E
+
 Range: R
 
 Wizard Controls:
+
 Left: Left Arrow
+
 Right: Right Arrow
+
 Jump: Up Arrow
+
 Block: Down Arrow
+
 Melee: /
+
 Range: Right Shift
 
 Important Features to Know:
